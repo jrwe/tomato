@@ -4,22 +4,41 @@
 	<meta charset="UTF-8">
 	<title>Pomodoro Timer</title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js" type="text/javascript"></script>
+    <script src="pomodo.js" type="text/javascript"></script>
 </head>
 <body>
-    <p id="clock"></p>
+    <p id="clock">25:00</p>
     <div id="controls">
         <button id="btn-start">Start</button>
-        <button id="btn-stop">Stop</button>
+        <button id="btn-stop" disabled="disabled">Stop</button>
     </div>
     <script type="text/javascript">
+        var timerID = null;
         var clock = $('#clock');
+        var pomodo = new Pomodo()
+
+        function updateClock() {
+            clock.text(pomodo.tick());
+        }
+
+        function switchEnabled(current, another) {
+            $(current).attr('disabled', 'disabled');
+            $(another).attr('disabled', null);
+        }
 
         $('#btn-start').click(function(){
-            clock.text('0:00');
+            if (!timerID) {
+                timerID = setInterval(updateClock, 1000);
+                switchEnabled(this, '#btn-stop')
+            }
         });
 
         $('#btn-stop').click(function(){
-            clock.text('25:00');
+            if (timerID) {
+                clearInterval(timerID);
+                timerID = null;
+                switchEnabled(this, '#btn-start')
+            }
         });
     </script>
 </body>
