@@ -13,32 +13,31 @@
         <button id="btn-stop" disabled="disabled">Stop</button>
     </div>
     <script type="text/javascript">
-        var timerID = null;
         var clock = $('#clock');
-        var pomodo = new Pomodo()
-
-        function updateClock() {
-            clock.text(pomodo.tick());
-        }
 
         function switchEnabled(current, another) {
             $(current).attr('disabled', 'disabled');
             $(another).attr('disabled', null);
         }
 
-        $('#btn-start').click(function(){
-            if (!timerID) {
-                timerID = setInterval(updateClock, 1000);
-                switchEnabled(this, '#btn-stop')
+        var timer = new ClockTimer({
+            onInterval: function (current) {
+                clock.text(current);
+            },
+            onTimeUp: function () {
+                clock.html('<strong style="color: red;">0:00</strong>');
+                switchEnabled('#btn-stop', '#btn-start');
             }
         });
 
+        $('#btn-start').click(function(){
+            timer.start();
+            switchEnabled(this, '#btn-stop');
+        });
+
         $('#btn-stop').click(function(){
-            if (timerID) {
-                clearInterval(timerID);
-                timerID = null;
-                switchEnabled(this, '#btn-start')
-            }
+            timer.stop();
+            switchEnabled(this, '#btn-start');
         });
     </script>
 </body>
