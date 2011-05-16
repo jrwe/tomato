@@ -1,47 +1,41 @@
-function Pomodo() {
-    //initial = 25 * 60 * 1000;
-    initial = 5000;
-    this.remaining = new Date(initial).getTime();
-}
-
-Pomodo.prototype.tick = function () {
-    this.remaining -= 1000;
-    var d = new Date(this.remaining);
-    return d.getMinutes() + ':' + d.getSeconds();
-}
-
-Pomodo.prototype.isTimeUp = function () {
-    return ((this.remaining - 1000) <= 0);
-}
-
-updateClock = function (timer) {
-    if (timer.pomodo.isTimeUp()) {
+onCountDown = function (timer) {
+    if (timer.isTimeUp()) {
         timer.stop();
         timer.onTimeUp();
     } else {
-        timer.onInterval(timer.pomodo.tick())
+        timer.onInterval(timer.update())
     }
 }
 
-function ClockTimer(callbacks) {
+function CountdownTimer(callbacks) {
     this.onTimeUp = callbacks.onTimeUp;
     this.onInterval = callbacks.onInterval;
     this.timerID = null;
 }
 
-ClockTimer.prototype.interval = 1000;
+CountdownTimer.prototype.interval = 1000;
+CountdownTimer.prototype.duration = 5000;
 
-ClockTimer.prototype.start = function () {
+CountdownTimer.prototype.start = function () {
     if (!this.timerID) {
-        this.pomodo = new Pomodo();
-        this.timerID = setInterval(updateClock, this.interval, this);
+        this.remaining = new Date(this.duration).getTime();
+        this.timerID = setInterval(onCountDown, this.interval, this);
     }
 }
 
-ClockTimer.prototype.stop = function () {
+CountdownTimer.prototype.stop = function () {
     if (this.timerID) {
         clearInterval(this.timerID);
-        this.pomodo = null;
+        this.remaining = null;
     }
 }
 
+CountdownTimer.prototype.update = function () {
+    this.remaining -= 1000;
+    var d = new Date(this.remaining);
+    return d.getMinutes() + ':' + d.getSeconds();
+}
+
+CountdownTimer.prototype.isTimeUp = function () {
+    return ((this.remaining - 1000) <= 0);
+}

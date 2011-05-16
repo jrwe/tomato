@@ -25,7 +25,7 @@
             $(another).attr('disabled', null);
         }
 
-        var timer = new ClockTimer({
+        var timer = new CountdownTimer({
             onInterval: function (current) {
                 clock.text(current);
             },
