@@ -26,6 +26,7 @@ CountdownTimer.prototype.start = function () {
 CountdownTimer.prototype.stop = function () {
     if (this.timerID) {
         clearInterval(this.timerID);
+        this.timerID = null;
         this.remaining = null;
     }
 }
