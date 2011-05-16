@@ -1,12 +1,3 @@
-onCountDown = function (timer) {
-    if (timer.isTimeUp()) {
-        timer.stop();
-        timer.onTimeUp();
-    } else {
-        timer.onInterval(timer.update())
-    }
-}
-
 function CountdownTimer(callbacks) {
     this.onTimeUp = callbacks.onTimeUp;
     this.onInterval = callbacks.onInterval;
@@ -19,7 +10,7 @@ CountdownTimer.prototype.duration = 5000;
 CountdownTimer.prototype.start = function () {
     if (!this.timerID) {
         this.remaining = new Date(this.duration).getTime();
-        this.timerID = setInterval(onCountDown, this.interval, this);
+        this.timerID = setInterval(this.onCountDown.bind(this), this.interval);
     }
 }
 
@@ -28,6 +19,15 @@ CountdownTimer.prototype.stop = function () {
         clearInterval(this.timerID);
         this.timerID = null;
         this.remaining = null;
+    }
+}
+
+CountdownTimer.prototype.onCountDown = function () {
+    if (this.isTimeUp()) {
+        this.stop();
+        this.onTimeUp();
+    } else {
+        this.onInterval(this.update())
     }
 }
 
