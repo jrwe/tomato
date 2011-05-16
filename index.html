@@ -11,6 +11,7 @@
     <div id="controls">
         <button id="btn-start" disabled="disabled">Start</button>
         <button id="btn-stop" disabled="disabled">Stop</button>
+        <button id="btn-stop-ring" style="display: none;">Stop ringing</button>
     </div>
 
     <!-- sound file is from http://soundbible.com/1550-Fire-Alarm.html -->
@@ -20,6 +21,7 @@
         var clock = $('#clock');
         var btnStart = $('#btn-start');
         var btnStop = $('#btn-stop');
+        var btnStopRing = $('#btn-stop-ring');
         var alarm = document.getElementById('alarm'); // the '$' doesn't work for it.
 
         function toggleEnabled(target) {
@@ -40,19 +42,26 @@
             onTimeUp: function () {
                 clock.html('<strong style="color: red;">0:00</strong>');
                 alarm.play();
+                btnStopRing.show();
                 switchEnabled();
             }
         });
 
-        $('#btn-start').click(function(){
+        btnStart.click(function() {
             timer.start();
             switchEnabled();
         });
 
-        $('#btn-stop').click(function(){
+        btnStop.click(function() {
             timer.stop();
             clock.text('25:00');
             switchEnabled();
+        });
+
+        btnStopRing.click(function () {
+            alarm.pause();
+            alarm.currentTime = 0;
+            btnStopRing.hide();
         });
 
         toggleEnabled(btnStart); // enable it when everything is loaded.
