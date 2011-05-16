@@ -9,11 +9,16 @@
 <body>
     <p id="clock">25:00</p>
     <div id="controls">
-        <button id="btn-start">Start</button>
+        <button id="btn-start" disabled="disabled">Start</button>
         <button id="btn-stop" disabled="disabled">Stop</button>
     </div>
+
+    <!-- sound file is from http://soundbible.com/1550-Fire-Alarm.html -->
+    <audio style="display: none;" id="alarm" preload src="alarm.wav">
+
     <script type="text/javascript">
         var clock = $('#clock');
+        var alarm = document.getElementById('alarm'); // the '$' doesn't work for it.
 
         function switchEnabled(current, another) {
             $(current).attr('disabled', 'disabled');
@@ -26,6 +31,7 @@
             },
             onTimeUp: function () {
                 clock.html('<strong style="color: red;">0:00</strong>');
+                alarm.play();
                 switchEnabled('#btn-stop', '#btn-start');
             }
         });
@@ -33,7 +39,7 @@
         $('#btn-start').click(function(){
             timer.start();
             switchEnabled(this, '#btn-stop');
-        });
+        }).attr('disabled', null); // enable it when (almost) everything is loaded.
 
         $('#btn-stop').click(function(){
             timer.stop();
