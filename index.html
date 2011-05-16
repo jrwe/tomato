@@ -18,11 +18,19 @@
 
     <script type="text/javascript">
         var clock = $('#clock');
+        var btnStart = $('#btn-start');
+        var btnStop = $('#btn-stop');
         var alarm = document.getElementById('alarm'); // the '$' doesn't work for it.
 
-        function switchEnabled(current, another) {
-            $(current).attr('disabled', 'disabled');
-            $(another).attr('disabled', null);
+        function toggleEnabled(target) {
+            obj = (target.attr == undefined) ? $(target) : target;
+            new_attr = (obj.attr('disabled') == null) ? 'disabled' : null;
+            obj.attr('disabled', new_attr);
+        }
+
+        function switchEnabled() {
+            toggleEnabled(btnStart);
+            toggleEnabled(btnStop);
         }
 
         var timer = new CountdownTimer({
@@ -32,19 +40,21 @@
             onTimeUp: function () {
                 clock.html('<strong style="color: red;">0:00</strong>');
                 alarm.play();
-                switchEnabled('#btn-stop', '#btn-start');
+                switchEnabled();
             }
         });
 
         $('#btn-start').click(function(){
             timer.start();
-            switchEnabled(this, '#btn-stop');
-        }).attr('disabled', null); // enable it when (almost) everything is loaded.
+            switchEnabled();
+        });
 
         $('#btn-stop').click(function(){
             timer.stop();
-            switchEnabled(this, '#btn-start');
+            switchEnabled();
         });
+
+        toggleEnabled(btnStart); // enable it when everything is loaded.
     </script>
 </body>
 </html>
