@@ -4,7 +4,6 @@
 	<meta charset="UTF-8">
 	<title>Pomodoro Timer</title>
     <script src="jquery16.js" type="text/javascript"></script>
-    <script src="pomodo.js" type="text/javascript"></script>
 </head>
 <body>
     <p id="clock">25:00</p>
@@ -17,18 +16,16 @@
     <!-- sound file is from http://soundbible.com/1550-Fire-Alarm.html -->
     <audio style="display: none;" id="alarm" preload="true" src="alarm.wav"></audio>
 
+    <script src="pomodo.js" type="text/javascript"></script>
     <script type="text/javascript">
-        var clock = $('#clock');
         var btnStart = $('#btn-start');
         var btnStop = $('#btn-stop');
         var btnStopRing = $('#btn-stop-ring');
-        var alarm = document.getElementById('alarm'); // the '$' doesn't work for it.
 
-        function toggleEnabled(target) {
-            obj = (target.attr == undefined) ? $(target) : target;
-            new_attr = (obj.attr('disabled') == null) ? 'disabled' : null;
-            obj.attr('disabled', new_attr);
-        }
+        var clock = new Clock({
+            panelID: '#clock',
+            alarmID: 'alarm'
+        });
 
         function switchEnabled() {
             toggleEnabled(btnStart);
@@ -36,31 +33,32 @@
         }
 
         var timer = new CountDownTimer({
-            onInterval: function (current) {
-                clock.text(current);
+            onInterval: function (currentTime) {
+                clock.render(currentTime);
             },
             onTimeUp: function () {
-                clock.html('<strong style="color: red;">0:00</strong>');
-                alarm.play();
                 btnStopRing.show();
+                clock.render(0);
+                clock.ring();
                 switchEnabled();
             }
         });
 
         btnStart.click(function() {
             timer.start();
+            clock.reset();
             switchEnabled();
         });
 
         btnStop.click(function() {
             timer.stop();
-            clock.text('25:00');
+            clock.reset();
             switchEnabled();
         });
 
         btnStopRing.click(function () {
-            alarm.pause();
-            alarm.currentTime = 0;
+            clock.stopRing();
+            clock.reset();
             btnStopRing.hide();
         });
 
