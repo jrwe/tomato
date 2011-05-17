@@ -1,20 +1,20 @@
-function CountdownTimer(callbacks) {
+function CountDownTimer(callbacks) {
     this.onTimeUp = callbacks.onTimeUp;
     this.onInterval = callbacks.onInterval;
     this.timerID = null;
 }
 
-CountdownTimer.prototype.interval = 1000;
-CountdownTimer.prototype.duration = 5000;
+CountDownTimer.prototype.interval = 1000;
+CountDownTimer.prototype.duration = 5000;
 
-CountdownTimer.prototype.start = function () {
+CountDownTimer.prototype.start = function () {
     if (!this.timerID) {
         this.remaining = new Date(this.duration).getTime();
         this.timerID = setInterval(this.onCountDown.bind(this), this.interval);
     }
 }
 
-CountdownTimer.prototype.stop = function () {
+CountDownTimer.prototype.stop = function () {
     if (this.timerID) {
         clearInterval(this.timerID);
         this.timerID = null;
@@ -22,7 +22,7 @@ CountdownTimer.prototype.stop = function () {
     }
 }
 
-CountdownTimer.prototype.onCountDown = function () {
+CountDownTimer.prototype.onCountDown = function () {
     if (this.isTimeUp()) {
         this.stop();
         this.onTimeUp();
@@ -31,12 +31,12 @@ CountdownTimer.prototype.onCountDown = function () {
     }
 }
 
-CountdownTimer.prototype.update = function () {
+CountDownTimer.prototype.update = function () {
     this.remaining -= 1000;
     var d = new Date(this.remaining);
     return d.getMinutes() + ':' + d.getSeconds();
 }
 
-CountdownTimer.prototype.isTimeUp = function () {
+CountDownTimer.prototype.isTimeUp = function () {
     return ((this.remaining - 1000) <= 0);
 }
