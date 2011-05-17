@@ -8,7 +8,7 @@
 <body>
     <p id="clock">25:00</p>
     <div id="controls">
-        <button id="btn-start" disabled="disabled">Start</button>
+        <button id="btn-start" disabled="disabled">Start a pomodo</button>
         <button id="btn-stop" disabled="disabled">Stop</button>
         <button id="btn-stop-ring" style="display: none;">Stop ringing</button>
     </div>
@@ -21,18 +21,15 @@
         var btnStart = $('#btn-start');
         var btnStop = $('#btn-stop');
         var btnStopRing = $('#btn-stop-ring');
+        var inPomodo = true;
 
         var clock = new Clock({
             panelID: '#clock',
             alarmID: 'alarm'
         });
 
-        function switchEnabled() {
-            toggleEnabled(btnStart);
-            toggleEnabled(btnStop);
-        }
-
-        var timer = new CountDownTimer({
+        var pomodoTimer = new CountDownTimer({
+            duration: minutesToMillsecs(0.2),
             onInterval: function (currentTime) {
                 clock.render(currentTime);
             },
@@ -40,25 +37,53 @@
                 btnStopRing.show();
                 clock.render(0);
                 clock.ring();
+                inPomodo = false;
                 switchEnabled();
+                btnStart.text('Take a break');
             }
         });
 
+        var breakTimer = new CountDownTimer({
+            duration: minutesToMillsecs(0.1),
+            onInterval: function (currentTime) {
+                clock.render(currentTime);
+            },
+            onTimeUp: function () {
+                btnStopRing.show();
+                clock.render(0);
+                clock.ring();
+                inPomodo = true;
+                switchEnabled();
+                btnStart.text('Start a pomodo');
+            }
+        });
+
+        function getCurrentTimer() {
+            return inPomodo ? pomodoTimer : breakTimer;
+        }
+
+        function switchEnabled() {
+            toggleEnabled(btnStart);
+            toggleEnabled(btnStop);
+        }
+
         btnStart.click(function() {
+            timer = getCurrentTimer();
             timer.start();
             clock.reset();
             switchEnabled();
         });
 
         btnStop.click(function() {
+            timer = getCurrentTimer();
             timer.stop();
             clock.reset();
+            inPomodo = true;
             switchEnabled();
         });
 
         btnStopRing.click(function () {
             clock.stopRing();
-            clock.reset();
             btnStopRing.hide();
         });
 

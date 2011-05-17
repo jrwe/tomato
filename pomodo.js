@@ -1,4 +1,8 @@
 // helper functions
+function minutesToMillsecs(minutes) {
+    return minutes * 60 * 1000;
+}
+
 function toggleEnabled(target) {
     obj = (target.attr == undefined) ? $(target) : target;
     new_attr = (obj.attr('disabled') == null) ? 'disabled' : null;
@@ -6,14 +10,14 @@ function toggleEnabled(target) {
 }
 //------------------------------------
 
-function CountDownTimer(callbacks) {
-    this.onTimeUp = callbacks.onTimeUp;
-    this.onInterval = callbacks.onInterval;
+function CountDownTimer(options) {
+    this.onTimeUp = options.onTimeUp;
+    this.onInterval = options.onInterval;
+    this.duration = options.duration;
     this.timerID = null;
 }
 
 CountDownTimer.prototype.interval = 1000;
-CountDownTimer.prototype.duration = 5000;
 
 CountDownTimer.prototype.start = function () {
     if (!this.timerID) {
