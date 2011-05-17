@@ -17,7 +17,6 @@ CountDownTimer.prototype.duration = 5000;
 
 CountDownTimer.prototype.start = function () {
     if (!this.timerID) {
-        //this.remaining = new Date(this.duration).getTime();
         this.remaining = this.duration;
         this.timerID = setInterval(this.onCountDown.bind(this), this.interval);
     }
@@ -42,9 +41,7 @@ CountDownTimer.prototype.onCountDown = function () {
 
 CountDownTimer.prototype.update = function () {
     this.remaining -= 1000;
-    //var d = new Date(this.remaining);
     return this.remaining;
-    //return d.getMinutes() + ':' + d.getSeconds();
 }
 
 CountDownTimer.prototype.isTimeUp = function () {
