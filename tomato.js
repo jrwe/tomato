@@ -7,12 +7,13 @@ var makeTomatoModel = function (opts) {
     var timerID = null;
 
     const interval = 1000;
-    const workDuration = minutesToMillsecs(0.1);
+    const tomatoDuration = minutesToMillsecs(0.1);
     const shortBreakDuration = minutesToMillsecs(0.1);
     const longBreakDuration = minutesToMillsecs(0.2);
 
     var remaining, currentDuration;
     var breakCount = 0;
+    var tomatoCount = 0;
 
     var onTimeChange, onTimeUp;
 
@@ -56,6 +57,10 @@ var makeTomatoModel = function (opts) {
         remaining -= interval;
 
         if (remaining <= 0) {
+            if (!isAtBreak()) {
+                tomatoCount++;
+            }
+
             atBreak = !atBreak;
             stopClock(false);
             onTimeUp();
@@ -69,7 +74,7 @@ var makeTomatoModel = function (opts) {
             breakCount++;
             currentDuration = (breakCount % 4 == 0) ? longBreakDuration : shortBreakDuration;
         } else {
-            currentDuration = workDuration;
+            currentDuration = tomatoDuration;
         }
     };
 
@@ -81,6 +86,8 @@ var makeTomatoModel = function (opts) {
         stopClock: stopClock,
         getTimeText: getTimeText,
         isAtBreak: isAtBreak,
+        getBreakCount: function () { return breakCount; },
+        getTomatoCount: function () { return tomatoCount; },
         setCallbacks: setCallbacks
     };
 }
@@ -89,12 +96,13 @@ var makeTomatoWidget = function (initialModel, alarmElement) {
     var model = initialModel;
     var rootElement = $('<div></div>');
     var alarm = alarmElement;
-    var clockPanel, startButton, stopButton, stopRingButton;
+    var clockPanel, startButton, stopButton, stopRingButton, countsPanel;
     var firstTime = true;
 
     var render = function () {
         renderClock();
         renderButtons();
+        renderCounts();
         rootElement.appendTo('body');
         firstTime = false;
     };
@@ -136,6 +144,14 @@ var makeTomatoWidget = function (initialModel, alarmElement) {
         rootElement.append(stopRingButton);
     };
 
+    var renderCounts = function () {
+        if (firstTime) {
+            countsPanel = $('<p></p>', {id: 'counts'});
+            rootElement.append(countsPanel);
+        }
+        countsPanel.text('Tomato: ' + model.getTomatoCount() + ' Break: ' + model.getBreakCount());
+    };
+
     var onTimeChange = function () {
         renderClock();
     };
@@ -147,6 +163,7 @@ var makeTomatoWidget = function (initialModel, alarmElement) {
             startButton.text('Start');
         }
         clockPanel.html('<strong style="color: red;">0:00</strong>');
+        renderCounts();
         alarm.play();
         stopButton.attr('disabled', 'disabled');
         startButton.attr('disabled', null);
