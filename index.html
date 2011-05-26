@@ -6,88 +6,17 @@
     <script src="jquery16.js" type="text/javascript"></script>
 </head>
 <body>
-    <p id="clock">25:00</p>
-    <div id="controls">
-        <button id="btn-start" disabled="disabled">Start a pomodo</button>
-        <button id="btn-stop" disabled="disabled">Stop</button>
-        <button id="btn-stop-ring" style="display: none;">Stop ringing</button>
-    </div>
-
     <!-- sound file is from http://soundbible.com/1550-Fire-Alarm.html -->
     <audio style="display: none;" id="alarm" preload="true" src="alarm.wav"></audio>
 
-    <script src="pomodo.js" type="text/javascript"></script>
+    <script src="tomato.js" type="text/javascript"></script>
     <script type="text/javascript">
-        var btnStart = $('#btn-start');
-        var btnStop = $('#btn-stop');
-        var btnStopRing = $('#btn-stop-ring');
-        var inPomodo = true;
-
-        var clock = new Clock({
-            panelID: '#clock',
-            alarmID: 'alarm'
+        $(document).ready(function () {
+            var tomatoModel = makeTomatoModel();
+            var alarmElement = document.getElementById('alarm'); // the '$' doesn't work for it.
+            var tomatoWidget = makeTomatoWidget(tomatoModel, alarmElement);
+            tomatoWidget.render();
         });
-
-        var pomodoTimer = new CountDownTimer({
-            duration: minutesToMillsecs(25),
-            onInterval: function (currentTime) {
-                clock.render(currentTime);
-            },
-            onTimeUp: function () {
-                btnStopRing.show();
-                clock.render(0);
-                clock.ring();
-                inPomodo = false;
-                switchEnabled();
-                btnStart.text('Take a break');
-            }
-        });
-
-        var breakTimer = new CountDownTimer({
-            duration: minutesToMillsecs(5),
-            onInterval: function (currentTime) {
-                clock.render(currentTime);
-            },
-            onTimeUp: function () {
-                btnStopRing.show();
-                clock.render(0);
-                clock.ring();
-                inPomodo = true;
-                switchEnabled();
-                btnStart.text('Start a pomodo');
-            }
-        });
-
-        function getCurrentTimer() {
-            return inPomodo ? pomodoTimer : breakTimer;
-        }
-
-        function switchEnabled() {
-            toggleEnabled(btnStart);
-            toggleEnabled(btnStop);
-        }
-
-        btnStart.click(function() {
-            timer = getCurrentTimer();
-            timer.start();
-            clock.reset();
-            switchEnabled();
-        });
-
-        btnStop.click(function() {
-            timer = getCurrentTimer();
-            timer.stop();
-            clock.reset();
-            inPomodo = true;
-            switchEnabled();
-        });
-
-        btnStopRing.click(function () {
-            clock.stopRing();
-            btnStopRing.hide();
-        });
-
-        toggleEnabled(btnStart); // enable it when everything is loaded.
     </script>
 </body>
 </html>
