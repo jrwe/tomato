@@ -2,54 +2,7 @@ function minutesToMillsecs(minutes) {
     return minutes * 60 * 1000;
 }
 
-// A generic observable subject class that is useful in model creation.
-// from http://peter.michaux.ca/examples/clocks/mvc-clock
-var makeObservableSubject = function() {
-    var observers = [];
-    
-    var addObserver = function(o) {
-        if (typeof o !== 'function') {
-            throw new Error('observer must be a function');
-        }
-        for (var i = 0, ilen = observers.length; i < ilen; i++) {
-            var observer = observers[i];
-
-            if (observer === o) {
-                throw new Error('observer already in the list');
-            }
-        }
-        observers.push(o);
-    };
-    
-    var removeObserver = function(o) {
-        for (var i = 0, ilen = observers.length; i < ilen; i++) {
-            var observer = observers[i];
-
-            if (observer === o) {
-                observers.splice(i, 1);
-                return;
-            }
-        }
-        throw new Error('could not find observer in list of observers');
-    };
-    
-    var notifyObservers = function(data) {
-        // Make a copy of observer list in case the list
-        // is mutated during the notifications.
-        var observersSnapshot = observers.slice(0);
-        for (var i = 0, ilen = observersSnapshot.length; i < ilen; i++) {
-            observersSnapshot[i](data);
-        }
-    };
-    
-    return {
-        addObserver: addObserver,
-        removeObserver: removeObserver,
-        notifyObservers: notifyObservers
-    };
-};
-
-var makeTomatoModel = function () {
+var makeTomatoModel = function (opts) {
     var atBreak = false;
     var timerID = null;
 
@@ -61,17 +14,13 @@ var makeTomatoModel = function () {
     var remaining, currentDuration;
     var breakCount = 0;
 
-    var timeChangeObservableSubject = makeObservableSubject();
-    var notifyTimeChangeObservers = timeChangeObservableSubject.notifyObservers;
-
-    var timeUpObservableSubject = makeObservableSubject();
-    var notifyTimeUpObservers = timeUpObservableSubject.notifyObservers;
+    var onTimeChange, onTimeUp;
 
     var startClock = function () {
         if (!timerID) {
             setCurrentDuration();
             remaining = currentDuration;
-            notifyTimeChangeObservers();
+            onTimeChange();
             timerID = setInterval(onInterval, interval);
         }
     };
@@ -83,7 +32,7 @@ var makeTomatoModel = function () {
 
             if (reset) {
                 remaining = currentDuration;
-                notifyTimeChangeObservers();
+                onTimeChange();
             }
         }
     };
@@ -98,15 +47,20 @@ var makeTomatoModel = function () {
         return text;
     };
 
+    var setCallbacks = function (callbacks) {
+        onTimeChange = callbacks.onTimeChange;
+        onTimeUp = callbacks.onTimeUp;
+    };
+
     var onInterval = function () {
         remaining -= interval;
 
         if (remaining <= 0) {
             atBreak = !atBreak;
             stopClock(false);
-            notifyTimeUpObservers();
+            onTimeUp();
         } else {
-            notifyTimeChangeObservers();
+            onTimeChange();
         }
     };
 
@@ -127,8 +81,7 @@ var makeTomatoModel = function () {
         stopClock: stopClock,
         getTimeText: getTimeText,
         isAtBreak: isAtBreak,
-        addTimeChangeObserver: timeChangeObservableSubject.addObserver,
-        addTimeUpObserver: timeUpObservableSubject.addObserver
+        setCallbacks: setCallbacks
     };
 }
 
@@ -138,7 +91,6 @@ var makeTomatoWidget = function (initialModel, alarmElement) {
     var alarm = alarmElement;
     var clockPanel, startButton, stopButton, stopRingButton;
     var firstTime = true;
-
 
     var render = function () {
         renderClock();
@@ -184,11 +136,11 @@ var makeTomatoWidget = function (initialModel, alarmElement) {
         rootElement.append(stopRingButton);
     };
 
-    timeChangeObserver = function () {
+    var onTimeChange = function () {
         renderClock();
     };
 
-    timeUpObserver = function () {
+    var onTimeUp = function () {
         if (model.isAtBreak()) {
             startButton.text('Take a break');
         } else {
@@ -201,8 +153,7 @@ var makeTomatoWidget = function (initialModel, alarmElement) {
         stopRingButton.show();
     };
 
-    model.addTimeChangeObserver(timeChangeObserver);
-    model.addTimeUpObserver(timeUpObserver);
+    model.setCallbacks({onTimeChange: onTimeChange, onTimeUp: onTimeUp});
 
     return {
         render: render
