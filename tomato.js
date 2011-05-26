@@ -38,9 +38,7 @@ var makeTomatoModel = function (opts) {
         }
     };
 
-    var isAtBreak = function () {
-        return atBreak;
-    };
+    var isAtBreak = function () { return atBreak; };
 
     var getTimeText = function () {
         var date = new Date(remaining);
@@ -57,9 +55,7 @@ var makeTomatoModel = function (opts) {
         remaining -= interval;
 
         if (remaining <= 0) {
-            if (!isAtBreak()) {
-                tomatoCount++;
-            }
+            if (!isAtBreak()) { tomatoCount++; }
 
             atBreak = !atBreak;
             stopClock(false);
@@ -119,16 +115,14 @@ var makeTomatoWidget = function (initialModel, alarmElement) {
         startButton = $('<button>Start</button>');
         startButton.click(function () {
             model.startClock();
-            startButton.attr('disabled', 'disabled');
-            stopButton.attr('disabled', null);
+            switchEnabled();
         });
 
         stopButton = $('<button>Stop</button>');
         stopButton.attr('disabled', 'disabled');
         stopButton.click(function () {
             model.stopClock(true);
-            stopButton.attr('disabled', 'disabled');
-            startButton.attr('disabled', null);
+            switchEnabled();
         });
 
         stopRingButton = $('<button>Stop Ring</button>');
@@ -165,9 +159,19 @@ var makeTomatoWidget = function (initialModel, alarmElement) {
         clockPanel.html('<strong style="color: red;">0:00</strong>');
         renderCounts();
         alarm.play();
-        stopButton.attr('disabled', 'disabled');
-        startButton.attr('disabled', null);
+        switchEnabled();
         stopRingButton.show();
+    };
+
+    var toggleEnabled = function (obj) {
+        disabled = obj.attr('disabled');
+        new_attr = disabled ? null : 'disabled';
+        obj.attr('disabled', new_attr);
+    };
+
+    var switchEnabled = function () {
+        toggleEnabled(startButton);
+        toggleEnabled(stopButton);
     };
 
     model.setCallbacks({onTimeChange: onTimeChange, onTimeUp: onTimeUp});
