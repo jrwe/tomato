@@ -134,11 +134,11 @@ var makeTomatoModel = function () {
 
 var makeTomatoWidget = function (initialModel, alarmElement) {
     var model = initialModel;
-    //var rootElement = $('<div></div>', {id: 'tomato-widget'});
     var rootElement = $('<div></div>');
     var alarm = alarmElement;
     var clockPanel, startButton, stopButton, stopRingButton;
     var firstTime = true;
+
 
     var render = function () {
         renderClock();
@@ -150,12 +150,6 @@ var makeTomatoWidget = function (initialModel, alarmElement) {
     var renderClock = function () {
         if (firstTime) {
             clockPanel = $('<p></p>', {id: 'clock'});
-            alarm = $('<audio></audio>');
-            alarm.attr('preload', 'true');
-            alarm.attr('src', 'alarm.wav');
-            alarm.css({display: 'none'});
-
-            rootElement.append(alarm);
             rootElement.append(clockPanel);
         }
         clockPanel.text(model.getTimeText());
@@ -180,7 +174,7 @@ var makeTomatoWidget = function (initialModel, alarmElement) {
         stopRingButton = $('<button>Stop Ring</button>');
         stopRingButton.css({display: 'none'});
         stopRingButton.click(function () {
-            //alarm.pause();
+            alarm.pause();
             alarm.currentTime = 0;
             stopRingButton.hide();
         });
@@ -201,7 +195,7 @@ var makeTomatoWidget = function (initialModel, alarmElement) {
             startButton.text('Start');
         }
         clockPanel.html('<strong style="color: red;">0:00</strong>');
-        //alarm.play();
+        alarm.play();
         stopButton.attr('disabled', 'disabled');
         startButton.attr('disabled', null);
         stopRingButton.show();
