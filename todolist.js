@@ -5,14 +5,15 @@ var makeTodoListModel = function () {
     var onAppend, onComplete;
 
     var append = function (attrs) {
-        todos.push({
+        var item = {
             description: attrs.description,
-            estimated_tomato: attrs.estimated_tomato,
-            used_tomato: 0,
+            estimatedTomato: attrs.estimatedTomato,
+            usedTomato: 0,
             completed: false,
             id: makeTodoId()
-        });
-        //onAppend();
+        };
+        todos.push(item);
+        onAppend(item);
     };
 
     var getById = function (id) {
@@ -27,7 +28,7 @@ var makeTodoListModel = function () {
     var markAsCompleted = function (id) {
         todo = getById(id);
         todo.obj.completed = true;
-        //onComplete();
+        onComplete();
     };
 
     var remove = function (id) {
@@ -39,16 +40,53 @@ var makeTodoListModel = function () {
         return todos;
     };
 
+    var setCallbacks = function (callbacks) {
+        onAppend = callbacks.onAppend;
+        onComplete = callbacks.onComplete;
+    };
+
     var makeTodoId = function () {
         return nextTodoId++;
-    }
+    };
 
     return {
         append: append,
         getById: getById,
         markAsCompleted: markAsCompleted,
         remove: remove,
-        fetch: fetch
-    }
-}
+        fetch: fetch,
+        setCallbacks: setCallbacks
+    };
+};
 
+var makeTodoListWidget = function (opts) {
+    var model = opts.model;
+    var descriptionInput = opts.descriptionInput;
+    var estimatedTomatoInput = opts.estimatedTomatoInput;
+    var addTodoButton = opts.addTodoButton;
+    var tableBody = opts.tableBody;
+
+    var render = function () {
+        addTodoButton.click(function() {
+            model.append({
+                description: descriptionInput.val(),
+                estimatedTomato: estimatedTomatoInput.val()
+            });
+        });
+    };
+
+    var renderItem = function (item) {
+        var tr = $('<tr><td></td></tr>');
+        tr.text(item.description);
+        tableBody.append(tr);
+    };
+
+    model.setCallbacks({
+        onAppend: function (item) { renderItem(item); },
+        onComplete: function () {}
+    });
+
+    return {
+        render: render
+    };
+};

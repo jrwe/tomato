@@ -19,6 +19,16 @@
                 alarm: document.getElementById('alarm') // the '$' doesn't work for it.
             });
             tomatoWidget.render();
+
+            var todoListModel = makeTodoListModel();
+            var todoListWidget = makeTodoListWidget({
+                model: todoListModel,
+                descriptionInput: $('#description'),
+                estimatedTomatoInput: $('#estimate'),
+                addTodoButton: $('#add-todo-button'),
+                tableBody: $('#todo-list > tbody')
+            });
+            todoListWidget.render();
         });
     </script>
 </head>
