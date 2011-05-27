@@ -1,6 +1,6 @@
-function minutesToMillsecs(minutes) {
+var minutesToMillsecs = function (minutes) {
     return minutes * 60 * 1000;
-}
+};
 
 var makeTomatoModel = function (opts) {
     var atBreak = false;
@@ -86,7 +86,7 @@ var makeTomatoModel = function (opts) {
         getTomatoCount: function () { return tomatoCount; },
         setCallbacks: setCallbacks
     };
-}
+};
 
 var makeTomatoWidget = function (opts) {
     var model = opts.model;
@@ -162,4 +162,4 @@ var makeTomatoWidget = function (opts) {
     return {
         render: render
     };
-}
+};
