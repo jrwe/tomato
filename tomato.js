@@ -88,61 +88,44 @@ var makeTomatoModel = function (opts) {
     };
 }
 
-var makeTomatoWidget = function (initialModel, alarmElement) {
-    var model = initialModel;
-    var rootElement = $('<div></div>');
-    var alarm = alarmElement;
-    var clockPanel, startButton, stopButton, stopRingButton, countsPanel;
-    var firstTime = true;
+var makeTomatoWidget = function (opts) {
+    var model = opts.model;
+    var alarm = opts.alarm;
+    var clockPanel = opts.clockPanel;
+    var countsPanel = opts.countsPanel;
+    var startButton = opts.startButton;
+    var stopButton = opts.stopButton;
+    var stopRingButton = opts.stopRingButton;
 
     var render = function () {
         renderClock();
         renderButtons();
         renderCounts();
-        rootElement.appendTo('body');
-        firstTime = false;
     };
 
     var renderClock = function () {
-        if (firstTime) {
-            clockPanel = $('<p></p>', {id: 'clock'});
-            rootElement.append(clockPanel);
-        }
         clockPanel.text(model.getTimeText());
     };
 
     var renderButtons = function () {
-        startButton = $('<button>Start</button>');
         startButton.click(function () {
             model.startClock();
             switchEnabled();
         });
 
-        stopButton = $('<button>Stop</button>');
-        stopButton.attr('disabled', 'disabled');
         stopButton.click(function () {
             model.stopClock(true);
             switchEnabled();
         });
 
-        stopRingButton = $('<button>Stop Ring</button>');
-        stopRingButton.css({display: 'none'});
         stopRingButton.click(function () {
             alarm.pause();
             alarm.currentTime = 0;
             stopRingButton.hide();
         });
-
-        rootElement.append(startButton);
-        rootElement.append(stopButton);
-        rootElement.append(stopRingButton);
     };
 
     var renderCounts = function () {
-        if (firstTime) {
-            countsPanel = $('<p></p>', {id: 'counts'});
-            rootElement.append(countsPanel);
-        }
         countsPanel.text('Tomato: ' + model.getTomatoCount() + ' Break: ' + model.getBreakCount());
     };
 
