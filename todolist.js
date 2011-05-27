@@ -76,8 +76,16 @@ var makeTodoListWidget = function (opts) {
     };
 
     var renderItem = function (item) {
-        var tr = $('<tr><td></td></tr>');
-        tr.text(item.description);
+        var tr = ich.todoItem(item);
+
+        $('input[type=radio]', tr).focus(function () {
+            var todoId = $(this).attr('todoId');
+        });
+
+        $('button', tr).click(function () {
+            tr.hide();
+        });
+
         tableBody.append(tr);
     };
 

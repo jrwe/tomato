@@ -3,9 +3,21 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Tomato Timer</title>
-    <script src="jquery16.js" type="text/javascript"></script>
+    <script src="jquery16.min.js" type="text/javascript"></script>
+    <script src="ICanHaz.min.js" type="text/javascript"></script>
     <script src="tomato.js" type="text/javascript"></script>
     <script src="todolist.js" type="text/javascript"></script>
+
+    <script id="todoItem" type="text/html">
+        <tr>
+            <td><input todoId="{{ id }}" type="radio" /></td>
+            <td>{{ description }}</td>
+            <td>{{ estimatedTomato }}</td>
+            <td>{{ usedTomato }}</td>
+            <td><button>Mark as completed</button></td>
+        </tr>
+    </script>
+
     <script type="text/javascript">
         $(document).ready(function () {
             var tomatoModel = makeTomatoModel();
@@ -59,13 +71,6 @@
                 <th></th>
             </thead>
             <tbody>
-                <tr>
-                    <td><input type="radio" /></td>
-                    <td>Todo Item One</td>
-                    <td>3</td>
-                    <td>1</td>
-                    <td><button>Mark as completed</button></td>
-                </tr>
             </tbody>
         </table>
     </div>
