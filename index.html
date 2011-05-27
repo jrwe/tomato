@@ -5,6 +5,7 @@
 	<title>Tomato Timer</title>
     <script src="jquery16.js" type="text/javascript"></script>
     <script src="tomato.js" type="text/javascript"></script>
+    <script src="todolist.js" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             var tomatoModel = makeTomatoModel();
@@ -24,7 +25,7 @@
 <body>
     <!-- sound file is from http://soundbible.com/1550-Fire-Alarm.html -->
     <audio style="display: none;" id="alarm" preload="true" src="alarm.wav"></audio>
-    <div id="main">
+    <div id="tomato">
         <h2 id="clock-panel"></h2>
         <p id="counts-panel"></p>
         <div id="controls">
@@ -32,6 +33,31 @@
             <button id="stop-button" disabled="disabled">Stop</button>
             <button id="stop-ring-button" style="display: none;">Stop ring</button>
         </div>
+    </div>
+    <div id="todos">
+        <label for="description">Description:</label>
+        <input id="description" name="description" type="text" />
+        <label for="estimate">Estimated tomatos:</label>
+        <input id="estimate" name="estimate" type="text" />
+        <button id="add-todo-button">Add</button>
+        <table id="todo-list">
+            <thead>
+                <th></th>
+                <th>Description</th>
+                <th>Estimated tomatos</th>
+                <th>Used tomatos</th>
+                <th></th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="radio" /></td>
+                    <td>Todo Item One</td>
+                    <td>3</td>
+                    <td>1</td>
+                    <td><button>Mark as completed</button></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </body>
 </html>
