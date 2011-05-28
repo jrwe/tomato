@@ -43,6 +43,9 @@
                 tableBody: $('#todo-list > tbody')
             });
             todoListWidget.render();
+            $('#sync-button').click(function () {
+                todoListModel.sync();
+            });
         });
     </script>
 </head>
@@ -77,6 +80,7 @@
             <tbody>
             </tbody>
         </table>
+        <button id="sync-button">Sync</button>
     </div>
 </body>
 </html>

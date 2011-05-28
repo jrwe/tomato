@@ -3,7 +3,7 @@ var makeTodoListModel = function (tomatoModel) {
     var nextTodoId = 1;
     var tomatoModel = tomatoModel;
 
-    var onAppend, onComplete;
+    var onAppend, onComplete, onRemove;
 
     var append = function (attrs) {
         var item = {
@@ -37,7 +37,7 @@ var makeTodoListModel = function (tomatoModel) {
         tomatoModel.setCurrentTask(todo.obj);
     };
 
-    var fetch = function () {
+    var loadAll = function () {
         return todos;
     };
 
@@ -60,12 +60,19 @@ var makeTodoListModel = function (tomatoModel) {
         return nextTodoId++;
     };
 
+    var sync = function () {
+        localStorage['todolist'] = JSON.stringify(todos);
+    };
+
+    todos = JSON.parse(localStorage['todolist']);
+
     return {
         append: append,
         selectById: selectById,
         markAsCompleted: markAsCompleted,
         remove: remove,
-        fetch: fetch,
+        loadAll: loadAll,
+        sync: sync,
         setCallbacks: setCallbacks
     };
 };
@@ -84,6 +91,11 @@ var makeTodoListWidget = function (opts) {
                 estimatedTomato: estimatedTomatoInput.val()
             });
         });
+
+        var todos = model.loadAll();
+        for (var i = 0; i < todos.length; i++) {
+            renderAppend(todos[i]);
+        }
     };
 
     var renderAppend = function (item) {
