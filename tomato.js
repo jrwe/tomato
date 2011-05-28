@@ -15,7 +15,7 @@ var makeTomatoModel = function (opts) {
     var breakCount = 0;
     var tomatoCount = 0;
 
-    var onTimeChange, onTimeUp;
+    var onTimeChange, onTimeUp, onTaskChange;
 
     var startClock = function () {
         if (!timerID) {
@@ -168,8 +168,8 @@ var makeTomatoWidget = function (opts) {
     };
 
     var toggleEnabled = function (obj) {
-        disabled = obj.attr('disabled');
-        new_attr = disabled ? null : 'disabled';
+        var disabled = obj.attr('disabled');
+        var new_attr = disabled ? null : 'disabled';
         obj.attr('disabled', new_attr);
     };
 
