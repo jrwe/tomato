@@ -20,6 +20,7 @@ var makeTodoListModel = function (tomatoModel) {
     var markAsCompleted = function (id) {
         var todo = getById(id);
         todo.obj.completed = true;
+        tomatoModel.setCurrentTask(null);
         onComplete(id);
     };
 
@@ -27,11 +28,13 @@ var makeTodoListModel = function (tomatoModel) {
         var todo = getById(id);
         todos.splice(todo.index, 1);
         todo = null;
+        tomatoModel.setCurrentTask(null);
         onRemove(id);
     };
 
     var selectById = function (id) {
         var todo = getById(id);
+        tomatoModel.setCurrentTask(todo.obj);
     };
 
     var fetch = function () {
@@ -86,7 +89,7 @@ var makeTodoListWidget = function (opts) {
     var renderAppend = function (item) {
         var tr = ich.todoItem(item);
 
-        $('input[type=radio]', tr).focus(function () {
+        $('input[type=radio]', tr).click(function () {
             model.selectById(item.id);
         });
 

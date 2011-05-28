@@ -46,9 +46,22 @@ var makeTomatoModel = function (opts) {
         return text;
     };
 
+    var setCurrentTask = function (task) {
+        atBreak = false;
+        stopClock(true);
+        breakCount = 0;
+
+        if (task) {
+            tomatoCount = task.usedTomato;
+        }
+
+        onTaskChange(task);
+    };
+
     var setCallbacks = function (callbacks) {
         onTimeChange = callbacks.onTimeChange;
         onTimeUp = callbacks.onTimeUp;
+        onTaskChange = callbacks.onTaskChange;
     };
 
     var onInterval = function () {
@@ -84,6 +97,7 @@ var makeTomatoModel = function (opts) {
         isAtBreak: isAtBreak,
         getBreakCount: function () { return breakCount; },
         getTomatoCount: function () { return tomatoCount; },
+        setCurrentTask: setCurrentTask,
         setCallbacks: setCallbacks
     };
 };
@@ -93,6 +107,7 @@ var makeTomatoWidget = function (opts) {
     var alarm = opts.alarm;
     var clockPanel = opts.clockPanel;
     var countsPanel = opts.countsPanel;
+    var taskPanel = opts.taskPanel;
     var startButton = opts.startButton;
     var stopButton = opts.stopButton;
     var stopRingButton = opts.stopRingButton;
@@ -101,6 +116,7 @@ var makeTomatoWidget = function (opts) {
         renderClock();
         renderButtons();
         renderCounts();
+        renderTask(null);
     };
 
     var renderClock = function () {
@@ -129,10 +145,6 @@ var makeTomatoWidget = function (opts) {
         countsPanel.text('Tomato: ' + model.getTomatoCount() + ' Break: ' + model.getBreakCount());
     };
 
-    var onTimeChange = function () {
-        renderClock();
-    };
-
     var onTimeUp = function () {
         if (model.isAtBreak()) {
             startButton.text('Take a break');
@@ -146,6 +158,14 @@ var makeTomatoWidget = function (opts) {
         stopRingButton.show();
     };
 
+    var renderTask = function (task) {
+        if (task) {
+            taskPanel.text(task.description);
+        } else {
+            taskPanel.text('No task selected');
+        }
+    };
+
     var toggleEnabled = function (obj) {
         disabled = obj.attr('disabled');
         new_attr = disabled ? null : 'disabled';
@@ -157,7 +177,7 @@ var makeTomatoWidget = function (opts) {
         toggleEnabled(stopButton);
     };
 
-    model.setCallbacks({onTimeChange: onTimeChange, onTimeUp: onTimeUp});
+    model.setCallbacks({onTimeChange: renderClock, onTimeUp: onTimeUp, onTaskChange: renderTask});
 
     return {
         render: render
