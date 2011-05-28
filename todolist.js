@@ -28,7 +28,7 @@ var makeTodoListModel = function () {
     var markAsCompleted = function (id) {
         todo = getById(id);
         todo.obj.completed = true;
-        onComplete();
+        onComplete(todo.obj);
     };
 
     var remove = function (id) {
@@ -79,19 +79,24 @@ var makeTodoListWidget = function (opts) {
         var tr = ich.todoItem(item);
 
         $('input[type=radio]', tr).focus(function () {
-            var todoId = $(this).attr('todoId');
+            //var todoId = $(this).attr('todoId');
         });
 
         $('button', tr).click(function () {
-            tr.hide();
+            model.markAsCompleted(item.id);
         });
 
         tableBody.append(tr);
     };
 
+    var renderCompletion = function (item) {
+        var tr = $('#todo-' + item.id);
+        $('.description', tr).css({textDecoration: 'line-through'});
+    }
+
     model.setCallbacks({
         onAppend: function (item) { renderItem(item); },
-        onComplete: function () {}
+        onComplete: function (item) { renderCompletion(item); }
     });
 
     return {

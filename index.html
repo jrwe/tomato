@@ -9,9 +9,9 @@
     <script src="todolist.js" type="text/javascript"></script>
 
     <script id="todoItem" type="text/html">
-        <tr>
+        <tr id="todo-{{ id }}">
             <td><input todoId="{{ id }}" type="radio" /></td>
-            <td>{{ description }}</td>
+            <td class="description">{{ description }}</td>
             <td>{{ estimatedTomato }}</td>
             <td>{{ usedTomato }}</td>
             <td><button>Mark as completed</button></td>
