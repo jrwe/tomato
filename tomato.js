@@ -161,6 +161,7 @@ var makeTomatoWidget = function (opts) {
     var renderTask = function (task) {
         if (task) {
             taskPanel.text(task.description);
+            renderCounts();
         } else {
             taskPanel.text('No task selected');
         }
