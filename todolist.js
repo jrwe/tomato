@@ -1,6 +1,7 @@
-var makeTodoListModel = function () {
+var makeTodoListModel = function (tomatoModel) {
     var todos = [];
     var nextTodoId = 1;
+    var tomatoModel = tomatoModel;
 
     var onAppend, onComplete;
 
@@ -16,6 +17,27 @@ var makeTodoListModel = function () {
         onAppend(item);
     };
 
+    var markAsCompleted = function (id) {
+        var todo = getById(id);
+        todo.obj.completed = true;
+        onComplete(id);
+    };
+
+    var remove = function (id) {
+        var todo = getById(id);
+        todos.splice(todo.index, 1);
+        todo = null;
+        onRemove(id);
+    };
+
+    var selectById = function (id) {
+        var todo = getById(id);
+    };
+
+    var fetch = function () {
+        return todos;
+    };
+
     var getById = function (id) {
         for (var i = 0; i < todos.length; i++) {
             if (todos[i].id == id) {
@@ -25,24 +47,10 @@ var makeTodoListModel = function () {
         return null;
     };
 
-    var markAsCompleted = function (id) {
-        todo = getById(id);
-        todo.obj.completed = true;
-        onComplete(todo.obj);
-    };
-
-    var remove = function (id) {
-        todo = getById(id);
-        todos.splice(todo.index, 1);
-    };
-
-    var fetch = function () {
-        return todos;
-    };
-
     var setCallbacks = function (callbacks) {
         onAppend = callbacks.onAppend;
         onComplete = callbacks.onComplete;
+        onRemove = callbacks.onRemove;
     };
 
     var makeTodoId = function () {
@@ -51,7 +59,7 @@ var makeTodoListModel = function () {
 
     return {
         append: append,
-        getById: getById,
+        selectById: selectById,
         markAsCompleted: markAsCompleted,
         remove: remove,
         fetch: fetch,
@@ -75,28 +83,37 @@ var makeTodoListWidget = function (opts) {
         });
     };
 
-    var renderItem = function (item) {
+    var renderAppend = function (item) {
         var tr = ich.todoItem(item);
 
         $('input[type=radio]', tr).focus(function () {
-            //var todoId = $(this).attr('todoId');
+            model.selectById(item.id);
         });
 
-        $('button', tr).click(function () {
+        $('.complete-button', tr).click(function () {
             model.markAsCompleted(item.id);
+        });
+
+        $('.remove-button', tr).click(function () {
+            model.remove(item.id);
         });
 
         tableBody.append(tr);
     };
 
-    var renderCompletion = function (item) {
-        var tr = $('#todo-' + item.id);
+    var renderComplete = function (id) {
+        var tr = $('#todo-' + id);
         $('.description', tr).css({textDecoration: 'line-through'});
-    }
+    };
+
+    var renderRemove = function (id) {
+        $('#todo-' + id).remove();
+    };
 
     model.setCallbacks({
-        onAppend: function (item) { renderItem(item); },
-        onComplete: function (item) { renderCompletion(item); }
+        onAppend: function (item) { renderAppend(item); },
+        onComplete: function (id) { renderComplete(id); },
+        onRemove: function (id) { renderRemove(id); }
     });
 
     return {

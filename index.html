@@ -14,7 +14,8 @@
             <td class="description">{{ description }}</td>
             <td>{{ estimatedTomato }}</td>
             <td>{{ usedTomato }}</td>
-            <td><button>Mark as completed</button></td>
+            <td><button class="complete-button">Mark as completed</button></td>
+            <td><button class="remove-button">Remove</button></td>
         </tr>
     </script>
 
@@ -32,7 +33,7 @@
             });
             tomatoWidget.render();
 
-            var todoListModel = makeTodoListModel();
+            var todoListModel = makeTodoListModel(tomatoModel);
             var todoListWidget = makeTodoListWidget({
                 model: todoListModel,
                 descriptionInput: $('#description'),
@@ -68,6 +69,7 @@
                 <th>Description</th>
                 <th>Estimated tomatos</th>
                 <th>Used tomatos</th>
+                <th></th>
                 <th></th>
             </thead>
             <tbody>
