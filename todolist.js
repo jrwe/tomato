@@ -34,10 +34,18 @@ var makeTodoListModel = function (tomatoModel) {
 
     var selectById = function (id) {
         var todo = getById(id);
-        tomatoModel.setCurrentTask(todo.obj);
+        tomatoModel.setCurrentTask(
+            todo.obj,
+            function (prevItem) {
+                onUpdate(prevItem);
+            }
+        );
     };
 
     var loadAll = function () {
+        if (localStorage['todolist']) {
+            todos = JSON.parse(localStorage['todolist']);
+        }
         return todos;
     };
 
@@ -54,6 +62,7 @@ var makeTodoListModel = function (tomatoModel) {
         onAppend = callbacks.onAppend;
         onComplete = callbacks.onComplete;
         onRemove = callbacks.onRemove;
+        onUpdate = callbacks.onUpdate;
     };
 
     var makeTodoId = function () {
@@ -63,8 +72,6 @@ var makeTodoListModel = function (tomatoModel) {
     var sync = function () {
         localStorage['todolist'] = JSON.stringify(todos);
     };
-
-    todos = JSON.parse(localStorage['todolist']);
 
     return {
         append: append,
@@ -121,14 +128,20 @@ var makeTodoListWidget = function (opts) {
         $('.description', tr).css({textDecoration: 'line-through'});
     };
 
+    var renderUpdate = function (item) {
+        var tr = $('#todo-' + item.id);
+        $('.used-tomato', tr).text(item.usedTomato);
+    };
+
     var renderRemove = function (id) {
         $('#todo-' + id).remove();
     };
 
     model.setCallbacks({
-        onAppend: function (item) { renderAppend(item); },
-        onComplete: function (id) { renderComplete(id); },
-        onRemove: function (id) { renderRemove(id); }
+        onAppend: renderAppend,
+        onComplete: renderComplete,
+        onRemove: renderRemove,
+        onUpdate: renderUpdate
     });
 
     return {

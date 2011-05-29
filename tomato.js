@@ -14,6 +14,7 @@ var makeTomatoModel = function (opts) {
     var remaining, currentDuration;
     var breakCount = 0;
     var tomatoCount = 0;
+    var currentTask = null;
 
     var onTimeChange, onTimeUp, onTaskChange;
 
@@ -46,7 +47,13 @@ var makeTomatoModel = function (opts) {
         return text;
     };
 
-    var setCurrentTask = function (task) {
+    var setCurrentTask = function (task, onUpdate) {
+        if (currentTask) {
+            currentTask.usedTomato = tomatoCount;
+            onUpdate(currentTask);
+        }
+        currentTask = task;
+
         atBreak = false;
         stopClock(true);
         breakCount = 0;
