@@ -65,6 +65,7 @@ var makeTodoListModel = function (tomatoModel) {
         onUpdate = callbacks.onUpdate;
     };
 
+    // FIXME: need to store nextTodoId when synced
     var makeTodoId = function () {
         return nextTodoId++;
     };
