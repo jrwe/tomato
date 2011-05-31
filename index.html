@@ -12,19 +12,21 @@
     <script src="js/todolist.js" type="text/javascript"></script>
 
     <script id="todoItem" type="text/html">
-        <tr id="todo-{{ id }}">
-            <td><input todoId="{{ id }}" type="radio" name="task" /></td>
-            <td class="description">{{ description }}</td>
-            <td>{{ estimatedTomato }}</td>
-            <td class="used-tomato">{{ usedTomato }}</td>
-            <td><button class="complete-button">Mark as completed</button></td>
-            <td><button class="remove-button">Remove</button></td>
-        </tr>
+        <li id="{{ htmlId }}">
+            <input type="radio" name="task" />
+            <span class="description">{{ description }}</span>
+            <span>{{ estimatedTomato }}</span>
+            <span class="used-tomato">{{ usedTomato }}</span>
+            <button class="complete-button">Mark as completed</button>
+            <button class="remove-button">Remove</button>
+        </li>
     </script>
 
     <script type="text/javascript">
         $(document).ready(function () {
-            var tomatoModel = makeTomatoModel();
+            var todoListApp = TodoListController.init();
+            todoListApp.view.render();
+            /*var tomatoModel = makeTomatoModel();
             var tomatoWidget = makeTomatoWidget({
                 model: tomatoModel,
                 clockPanel: $('#clock-panel'),
@@ -48,7 +50,7 @@
             todoListWidget.render();
             $('#sync-button').click(function () {
                 todoListModel.sync();
-            });
+            });*/
         });
     </script>
 </head>
@@ -71,18 +73,8 @@
         <label for="estimate">Estimated tomatos:</label>
         <input id="estimate" name="estimate" type="text" />
         <button id="add-todo-button">Add</button>
-        <table id="todo-list">
-            <thead>
-                <th></th>
-                <th>Description</th>
-                <th>Estimated tomatos</th>
-                <th>Used tomatos</th>
-                <th></th>
-                <th></th>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        <ul id="todo-list">
+        </ul>
         <button id="sync-button">Sync</button>
     </div>
 </body>

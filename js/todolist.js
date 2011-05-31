@@ -1,3 +1,82 @@
+var Todo = Backbone.Model.extend({
+    initialize: function (spec) {
+        this.completed = false;
+        this.usedTomato = 0;
+        this.htmlId = 'todo-' + this.cid;
+    },
+
+    markAsCompleted: function () { this.completed = true; }
+});
+
+var TodoView = Backbone.View.extend({
+    initialize: function () {
+        this.model.bind('change:completed', this.completeTodo);
+    },
+
+    render: function () {
+        this.el = ich.todoItem(this.model.toJSON());
+        this.uiObj = $('#' + this.model.get('htmlId'));
+        $('.complete-button', this.uiObj).click(this.onCompleteButtonClick.bind(this));
+
+        return this;
+    },
+
+    completeTodo: function () {
+        $('.description', this.uiObj).css({textDecoration: 'line-through'});
+    },
+
+    onCompleteButtonClick: function () {
+        this.model.markAsCompleted();
+        alert('test');
+    }
+});
+
+var TodoList = Backbone.Collection.extend({model: Todo});
+
+var TodoListController = {
+    init: function (spec) {
+        this.model = new TodoList();
+        this.view = new TodoListView({model: this.model});
+        return this;
+    }
+};
+
+var TodoListView = Backbone.View.extend({
+    initialize: function () {
+        this.model.bind('add', this.addTodo.bind(this));
+        this.model.bind('remove', this.removeTodo.bind(this));
+    },
+
+    events: {
+        'click #add-todo-button': 'onAddTodoButtonClick'
+    },
+
+    render: function () {
+        this.todoList = $('#todo-list');
+        $('#add-todo-button').click(this.onAddTodoButtonClick.bind(this));
+
+        return this;
+    },
+
+    addTodo: function (todo) {
+        var view = new TodoView({model: todo})
+        this.todoList.append(view.render().el);
+    },
+
+    removeTodo: function (todo) {
+        this.$('#' + todo.get('htmlId')).remove();
+    },
+
+    onAddTodoButtonClick: function () {
+        this.model.add({
+            description: $('#description').val(),
+            estimatedTomato: $('#estimate').val()
+        });
+    }
+
+});
+
+
 var makeTodoListModel = function (_tomatoModel) {
     var todos = [];
     var nextTodoId = 1;
