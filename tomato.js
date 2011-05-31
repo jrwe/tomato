@@ -1,6 +1,6 @@
-function minutesToMillsecs(minutes) {
+var minutesToMillsecs = function (minutes) {
     return minutes * 60 * 1000;
-}
+};
 
 var makeTomatoModel = function (opts) {
     var atBreak = false;
@@ -14,8 +14,9 @@ var makeTomatoModel = function (opts) {
     var remaining, currentDuration;
     var breakCount = 0;
     var tomatoCount = 0;
+    var currentTask = null;
 
-    var onTimeChange, onTimeUp;
+    var onTimeChange, onTimeUp, onTaskChange;
 
     var startClock = function () {
         if (!timerID) {
@@ -46,9 +47,28 @@ var makeTomatoModel = function (opts) {
         return text;
     };
 
+    var setCurrentTask = function (task, onUpdate) {
+        if (currentTask) {
+            currentTask.usedTomato = tomatoCount;
+            onUpdate(currentTask);
+        }
+        currentTask = task;
+
+        atBreak = false;
+        stopClock(true);
+        breakCount = 0;
+
+        if (task) {
+            tomatoCount = task.usedTomato;
+        }
+
+        onTaskChange(task);
+    };
+
     var setCallbacks = function (callbacks) {
         onTimeChange = callbacks.onTimeChange;
         onTimeUp = callbacks.onTimeUp;
+        onTaskChange = callbacks.onTaskChange;
     };
 
     var onInterval = function () {
@@ -84,38 +104,43 @@ var makeTomatoModel = function (opts) {
         isAtBreak: isAtBreak,
         getBreakCount: function () { return breakCount; },
         getTomatoCount: function () { return tomatoCount; },
+        setCurrentTask: setCurrentTask,
         setCallbacks: setCallbacks
     };
-}
+};
 
 var makeTomatoWidget = function (opts) {
     var model = opts.model;
     var alarm = opts.alarm;
     var clockPanel = opts.clockPanel;
     var countsPanel = opts.countsPanel;
+    var taskPanel = opts.taskPanel;
     var startButton = opts.startButton;
     var stopButton = opts.stopButton;
     var stopRingButton = opts.stopRingButton;
 
     var render = function () {
         renderClock();
-        renderButtons();
+        bindButtonEvents();
         renderCounts();
+        renderTask(null);
     };
 
     var renderClock = function () {
         clockPanel.text(model.getTimeText());
     };
 
-    var renderButtons = function () {
+    var bindButtonEvents = function () {
         startButton.click(function () {
             model.startClock();
-            switchEnabled();
+            setEnabled(startButton, false);
+            setEnabled(stopButton, true);
         });
 
         stopButton.click(function () {
             model.stopClock(true);
-            switchEnabled();
+            setEnabled(startButton, true);
+            setEnabled(stopButton, false);
         });
 
         stopRingButton.click(function () {
@@ -129,91 +154,45 @@ var makeTomatoWidget = function (opts) {
         countsPanel.text('Tomato: ' + model.getTomatoCount() + ' Break: ' + model.getBreakCount());
     };
 
-    var onTimeChange = function () {
-        renderClock();
-    };
-
     var onTimeUp = function () {
-        if (model.isAtBreak()) {
-            startButton.text('Take a break');
-        } else {
-            startButton.text('Start');
-        }
+        renderButtons();
+        setEnabled(startButton, true);
+        setEnabled(stopButton, false);
         clockPanel.html('<strong style="color: red;">0:00</strong>');
         renderCounts();
         alarm.play();
-        switchEnabled();
-        stopRingButton.show();
     };
 
-    var toggleEnabled = function (obj) {
-        disabled = obj.attr('disabled');
-        new_attr = disabled ? null : 'disabled';
-        obj.attr('disabled', new_attr);
+    var renderButtons = function () {
+        if (model.isAtBreak()) {
+            startButton.text('Take a break');
+            stopRingButton.show();
+        } else {
+            startButton.text('Start');
+        }
     };
 
-    var switchEnabled = function () {
-        toggleEnabled(startButton);
-        toggleEnabled(stopButton);
+    var renderTask = function (task) {
+        renderButtons();
+        if (task) {
+            taskPanel.text(task.description);
+            renderCounts();
+            setEnabled(startButton, true);
+            setEnabled(stopButton, false);
+        } else {
+            taskPanel.text('No task selected');
+            setEnabled(startButton, false);
+            setEnabled(stopButton, false);
+        }
     };
 
-    model.setCallbacks({onTimeChange: onTimeChange, onTimeUp: onTimeUp});
+    var setEnabled = function (obj, enabled) {
+        obj.attr('disabled', enabled ? null : 'disabled');
+    };
+
+    model.setCallbacks({onTimeChange: renderClock, onTimeUp: onTimeUp, onTaskChange: renderTask});
 
     return {
         render: render
     };
-}
-
-var makeTodoListModel = function () {
-    var todos = [];
-    var nextTodoId = 1;
-
-    var onAppend, onComplete;
-
-    var append = function (attrs) {
-        todos.push({
-            description: attrs.description,
-            estimated_tomato: attrs.estimated_tomato,
-            used_tomato: 0,
-            completed: false,
-            id: makeTodoId()
-        });
-        //onAppend();
-    };
-
-    var getById = function (id) {
-        for (var i = 0; i < todos.length; i++) {
-            if (todos[i].id == id) {
-                return {obj: todos[i], index: i};
-            }
-        }
-        return null;
-    };
-
-    var markAsCompleted = function (id) {
-        todo = getById(id);
-        todo.obj.completed = true;
-        //onComplete();
-    };
-
-    var remove = function (id) {
-        todo = getById(id);
-        todos.splice(todo.index, 1);
-    };
-
-    var fetch = function () {
-        return todos;
-    };
-
-    var makeTodoId = function () {
-        return nextTodoId++;
-    }
-
-    return {
-        append: append,
-        getById: getById,
-        markAsCompleted: markAsCompleted,
-        remove: remove,
-        fetch: fetch
-    }
-}
+};
