@@ -121,7 +121,7 @@ var makeTomatoWidget = function (opts) {
 
     var render = function () {
         renderClock();
-        renderButtons();
+        bindButtonEvents();
         renderCounts();
         renderTask(null);
     };
@@ -130,15 +130,17 @@ var makeTomatoWidget = function (opts) {
         clockPanel.text(model.getTimeText());
     };
 
-    var renderButtons = function () {
+    var bindButtonEvents = function () {
         startButton.click(function () {
             model.startClock();
-            switchEnabled();
+            setEnabled(startButton, false);
+            setEnabled(stopButton, true);
         });
 
         stopButton.click(function () {
             model.stopClock(true);
-            switchEnabled();
+            setEnabled(startButton, true);
+            setEnabled(stopButton, false);
         });
 
         stopRingButton.click(function () {
@@ -153,36 +155,39 @@ var makeTomatoWidget = function (opts) {
     };
 
     var onTimeUp = function () {
-        if (model.isAtBreak()) {
-            startButton.text('Take a break');
-        } else {
-            startButton.text('Start');
-        }
+        renderButtons();
+        setEnabled(startButton, true);
+        setEnabled(stopButton, false);
         clockPanel.html('<strong style="color: red;">0:00</strong>');
         renderCounts();
         alarm.play();
-        switchEnabled();
-        stopRingButton.show();
     };
 
-    var renderTask = function (task) {
-        if (task) {
-            taskPanel.text(task.description);
-            renderCounts();
+    var renderButtons = function () {
+        if (model.isAtBreak()) {
+            startButton.text('Take a break');
+            stopRingButton.show();
         } else {
-            taskPanel.text('No task selected');
+            startButton.text('Start');
         }
     };
 
-    var toggleEnabled = function (obj) {
-        var disabled = obj.attr('disabled');
-        var new_attr = disabled ? null : 'disabled';
-        obj.attr('disabled', new_attr);
+    var renderTask = function (task) {
+        renderButtons();
+        if (task) {
+            taskPanel.text(task.description);
+            renderCounts();
+            setEnabled(startButton, true);
+            setEnabled(stopButton, false);
+        } else {
+            taskPanel.text('No task selected');
+            setEnabled(startButton, false);
+            setEnabled(stopButton, false);
+        }
     };
 
-    var switchEnabled = function () {
-        toggleEnabled(startButton);
-        toggleEnabled(stopButton);
+    var setEnabled = function (obj, enabled) {
+        obj.attr('disabled', enabled ? null : 'disabled');
     };
 
     model.setCallbacks({onTimeChange: renderClock, onTimeUp: onTimeUp, onTaskChange: renderTask});
