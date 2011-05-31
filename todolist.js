@@ -1,7 +1,7 @@
-var makeTodoListModel = function (tomatoModel) {
+var makeTodoListModel = function (_tomatoModel) {
     var todos = [];
     var nextTodoId = 1;
-    var tomatoModel = tomatoModel;
+    var tomatoModel = _tomatoModel;
 
     var onAppend, onComplete, onRemove;
 
@@ -20,7 +20,7 @@ var makeTodoListModel = function (tomatoModel) {
     var markAsCompleted = function (id) {
         var todo = getById(id);
         todo.obj.completed = true;
-        tomatoModel.setCurrentTask(null);
+        tomatoModel.setCurrentTask(null, function () {});
         onComplete(id);
     };
 
@@ -28,7 +28,7 @@ var makeTodoListModel = function (tomatoModel) {
         var todo = getById(id);
         todos.splice(todo.index, 1);
         todo = null;
-        tomatoModel.setCurrentTask(null);
+        tomatoModel.setCurrentTask(null, function () {});
         onRemove(id);
     };
 
