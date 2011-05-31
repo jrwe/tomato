@@ -46,6 +46,11 @@ var makeTodoListModel = function (tomatoModel) {
         if (localStorage['todolist']) {
             todos = JSON.parse(localStorage['todolist']);
         }
+
+        if (localStorage['nextTodoId']) {
+            nextTodoId = localStorage['nextTodoId'];
+        }
+
         return todos;
     };
 
@@ -65,13 +70,13 @@ var makeTodoListModel = function (tomatoModel) {
         onUpdate = callbacks.onUpdate;
     };
 
-    // FIXME: need to store nextTodoId when synced
     var makeTodoId = function () {
         return nextTodoId++;
     };
 
     var sync = function () {
         localStorage['todolist'] = JSON.stringify(todos);
+        localStorage['nextTodoId'] = nextTodoId;
     };
 
     return {
