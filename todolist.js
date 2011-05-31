@@ -28,6 +28,7 @@ var makeTodoListModel = function (_tomatoModel) {
         var todo = getById(id);
         todos.splice(todo.index, 1);
         todo = null;
+        // FIXME: should test if it is currentTask
         tomatoModel.setCurrentTask(null, function () {});
         onRemove(id);
     };
