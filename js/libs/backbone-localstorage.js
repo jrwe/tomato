@@ -1,4 +1,3 @@
-// https://github.com/documentcloud/backbone/blob/master/examples/backbone-localstorage.js
 // A simple module to replace `Backbone.sync` with *localStorage*-based
 // persistence. Models are given GUIDS, and saved into a JSON object. Simple
 // as that.
@@ -65,7 +64,7 @@ _.extend(Store.prototype, {
 
 // Override `Backbone.sync` to use delegate to the model or collection's
 // *localStorage* property, which should be an instance of `Store`.
-Backbone.sync = function(method, model, options) {
+Backbone.sync = function(method, model, success, error) {
 
   var resp;
   var store = model.localStorage || model.collection.localStorage;
@@ -78,8 +77,8 @@ Backbone.sync = function(method, model, options) {
   }
 
   if (resp) {
-    options.success(resp);
+    success(resp);
   } else {
-    options.error("Record not found");
+    error("Record not found");
   }
 };
