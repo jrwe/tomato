@@ -64,6 +64,10 @@ input[type=text]:focus {
     margin-bottom: 15px;
 }
 
+#ring-switch {
+    display: none;
+}
+
 #todo-description {
     width: 65%;
 }
@@ -95,6 +99,11 @@ ul#todo-list > li.active {
 
 ul#todo-list > li .todo-description {
     margin-left: 1em;
+}
+
+ul#todo-list > li .completed {
+    color: #aaa;
+    text-decoration: line-through;
 }
 
 ul#todo-list > li .remove-todo {
