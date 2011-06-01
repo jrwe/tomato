@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Tomato Timer</title>
+    <link rel="stylesheet" href="screen.css" charset="utf-8" media="screen" />
     <script src="js/libs/jquery-1.6-min.js" type="text/javascript"></script>
     <script src="js/libs/underscore-1.1.6-min.js" type="text/javascript"></script>
     <script src="js/libs/backbone-0.3.3-min.js" type="text/javascript"></script>
@@ -24,59 +25,47 @@
     </script>
 
     <script type="text/javascript">
-        $(function () {
+        /*$(function () {
             var todoList = new TodoList();
             var todoListView = new TodoListView({model: todoList, el: $('#todos')});
-            /*var tomatoModel = makeTomatoModel();
-            var tomatoWidget = makeTomatoWidget({
-                model: tomatoModel,
-                clockPanel: $('#clock-panel'),
-                countsPanel: $('#counts-panel'),
-                taskPanel: $('#task-panel'),
-                startButton: $('#start-button'),
-                stopButton: $('#stop-button'),
-                stopRingButton: $('#stop-ring-button'),
-                alarm: document.getElementById('alarm') // the '$' doesn't work for it.
-            });
-            tomatoWidget.render();
-
-            var todoListModel = makeTodoListModel(tomatoModel);
-            var todoListWidget = makeTodoListWidget({
-                model: todoListModel,
-                descriptionInput: $('#description'),
-                estimatedTomatoInput: $('#estimate'),
-                addTodoButton: $('#add-todo-button'),
-                tableBody: $('#todo-list > tbody')
-            });
-            todoListWidget.render();
-            $('#sync-button').click(function () {
-                todoListModel.sync();
-            });*/
-        });
+        });*/
     </script>
 </head>
 <body>
     <!-- sound file is from http://soundbible.com/1550-Fire-Alarm.html -->
     <audio style="display: none;" id="alarm" preload="true" src="alarm.wav"></audio>
-    <div id="tomato">
-        <h2 id="clock-panel"></h2>
-        <h2 id="task-panel"></h2>
-        <p id="counts-panel"></p>
-        <div id="controls">
-            <button id="start-button">Start</button>
-            <button id="stop-button" disabled="disabled">Stop</button>
-            <button id="stop-ring-button" style="display: none;">Stop ring</button>
-        </div>
-    </div>
-    <div id="todos">
-        <label for="description">Description:</label>
-        <input id="description" name="description" type="text" />
-        <label for="estimate">Estimated tomatos:</label>
-        <input id="estimate" name="estimate" type="text" />
-        <button id="add-todo-button">Add</button>
-        <ul id="todo-list">
-        </ul>
-        <button id="sync-button">Sync</button>
+    <div id="page">
+    	<div id="clock">
+            <span id="current-task">Fuck me</span>
+            <span id="tomato-counts">2 / 5</span>
+            <span id="clock-panel">25:00</span>
+            <div id="controls">
+                <button id="clock-switch">Start Tomato</button>
+                <button id="ring-switch">Stop Ring</button>
+            </div>
+    	</div>
+    	<div id="todos">
+    		<input id="todo-description" type="text" placeholder="Description"/>
+    		<input id="estimated-tomato" type="text" placeholder="Estimated Tomato"/>
+    		<button id="add-todo">Add</button>
+            <ul id="todo-list">
+                <li>
+                	<input type="checkbox" class="complete-todo" />
+                	<span class="todo-description">Task One</span>
+                	<span class="remove-todo"></span>
+                </li>
+                <li class="active">
+                	<input type="checkbox" class="complete-todo" />
+                	<span class="todo-description">Task Two</span>
+                	<span class="remove-todo"></span>
+                </li>
+                <li>
+                	<input type="checkbox" class="complete-todo" />
+                	<span class="todo-description">Task Three</span>
+                	<span class="remove-todo"></span>
+                </li>
+            </ul>
+    	</div>
     </div>
 </body>
 </html>
