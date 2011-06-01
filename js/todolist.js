@@ -5,56 +5,66 @@ var Todo = Backbone.Model.extend({
         this.htmlId = 'todo-' + this.cid;
     },
 
-    markAsCompleted: function () { this.completed = true; }
+    markAsCompleted: function () {
+        this.save({completed: true});
+    },
+
+    remove: function () {
+        this.destroy();
+    }
 });
 
 var TodoView = Backbone.View.extend({
     initialize: function () {
+        _.bindAll(this, 'completeTodo', 'removeTodo');
         this.model.bind('change:completed', this.completeTodo);
+        this.model.bind('remove', this.removeTodo);
     },
 
     render: function () {
         this.el = ich.todoItem(this.model.toJSON());
-        this.uiObj = $('#' + this.model.get('htmlId'));
-        $('.complete-button', this.uiObj).click(this.onCompleteButtonClick.bind(this));
+        this.$('.complete-button').click(this.onCompleteButtonClick.bind(this));
+        this.$('.remove-button').click(this.onRemoveButtonClick.bind(this));
 
         return this;
     },
 
     completeTodo: function () {
-        $('.description', this.uiObj).css({textDecoration: 'line-through'});
+        this.$('.description').css({textDecoration: 'line-through'});
+    },
+
+    removeTodo: function () {
+        $(this.el).remove();
     },
 
     onCompleteButtonClick: function () {
         this.model.markAsCompleted();
-        alert('test');
+    },
+
+    onRemoveButtonClick: function () {
+        this.model.remove();
     }
 });
 
-var TodoList = Backbone.Collection.extend({model: Todo});
-
-var TodoListController = {
-    init: function (spec) {
-        this.model = new TodoList();
-        this.view = new TodoListView({model: this.model});
-        return this;
-    }
-};
+var TodoList = Backbone.Collection.extend({
+    model: Todo,
+    localStorage: new Store("todos")
+});
 
 var TodoListView = Backbone.View.extend({
-    initialize: function () {
-        this.model.bind('add', this.addTodo.bind(this));
-        this.model.bind('remove', this.removeTodo.bind(this));
-    },
 
     events: {
         'click #add-todo-button': 'onAddTodoButtonClick'
     },
 
-    render: function () {
-        this.todoList = $('#todo-list');
-        $('#add-todo-button').click(this.onAddTodoButtonClick.bind(this));
+    initialize: function () {
+        _.bindAll(this, 'addTodo');
+        this.model.bind('add', this.addTodo);
 
+        this.todoList = this.$('#todo-list');
+    },
+
+    render: function () {
         return this;
     },
 
@@ -63,12 +73,8 @@ var TodoListView = Backbone.View.extend({
         this.todoList.append(view.render().el);
     },
 
-    removeTodo: function (todo) {
-        this.$('#' + todo.get('htmlId')).remove();
-    },
-
     onAddTodoButtonClick: function () {
-        this.model.add({
+        this.model.create({
             description: $('#description').val(),
             estimatedTomato: $('#estimate').val()
         });
