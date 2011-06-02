@@ -1,11 +1,16 @@
 var Todo = Backbone.Model.extend({
     initialize: function (spec) {
-        this.completed = false;
-        this.usedTomato = 0;
         this.htmlId = 'todo-' + this.cid;
     },
 
-    activate: function () { this.trigger('activate'); },
+    defaults: {
+        completed: false,
+        usedTomato: 0
+    },
+
+    activate: function () { 
+        this.trigger('activate', this); 
+    },
 
     toggleCompleted: function () {
         this.save({completed: !this.get('completed')});
@@ -65,7 +70,11 @@ var TodoView = Backbone.View.extend({
 
 var TodoList = Backbone.Collection.extend({
     model: Todo,
-    localStorage: new Store("todos")
+    localStorage: new Store("todos"),
+    
+    initialize: function (spec) {
+        this.tomatoModel = spec.tomatoModel;
+    }
 });
 
 var TodoListView = Backbone.View.extend({
@@ -75,7 +84,7 @@ var TodoListView = Backbone.View.extend({
     },
 
     initialize: function () {
-        _.bindAll(this, 'addTodo', 'addTodos');
+        _.bindAll(this, 'addTodo', 'addTodos', 'switchTodo');
         this.model.bind('add', this.addTodo);
         this.model.bind('refresh', this.addTodos);
 
@@ -95,11 +104,15 @@ var TodoListView = Backbone.View.extend({
         this.todoList.append(view.render().el);
         this.descriptionInput.val('');
         this.estimatedTomatoInput.val('');
+        todo.bind('activate', this.switchTodo);
     },
 
     addTodos: function () {
         this.model.each(this.addTodo);
-        //_.each(this.model, this.addTodo);
+    },
+
+    switchTodo: function (todo) {
+        this.model.tomatoModel.setCurrentTask(todo);
     },
 
     onAddTodoButtonClick: function () {
@@ -109,3 +122,4 @@ var TodoListView = Backbone.View.extend({
         });
     }
 });
+

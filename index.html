@@ -14,15 +14,21 @@
     <script src="js/todolist.js" type="text/javascript"></script>
 
     <script id="clockContent" type="text/html">
-        <span id="current-task">{{ currentTask }}</span>
+        {{#task}}
+        <span id="current-task">{{ task }}</span>
         <span id="tomato-counts">{{ usedTomato }} / {{ estimatedTomato }}</span>
-        <span id="clock-panel">{{ currentTime }}</span>
+        <span id="clock-panel">{{ time }}</span>
         <div id="controls">
             <button id="clock-switch">{{ clockSwitchLabel }}</button>
             {{#isTimeUp}}
                 <button id="ring-switch">Stop Ring</button>
             {{/isTimeUp}}
         </div>
+        {{/task}}
+
+        {{^task}}
+            <span id="current-task">No task selected</span>
+        {{/task}}
     </script>
 
     <script id="todoItem" type="text/html">
@@ -43,8 +49,11 @@
 
     <script type="text/javascript">
         $(function () {
-            var todoList = new TodoList();
+            var tomato = new Tomato();
+            var tomatoView = new TomatoView({model: tomato, el: $('#clock')});
+            var todoList = new TodoList({tomatoModel: tomato});
             var todoListView = new TodoListView({model: todoList, el: $('#todos')});
+            tomatoView.render({});
         });
     </script>
 </head>

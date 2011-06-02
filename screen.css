@@ -46,7 +46,6 @@ input[type=text]:focus {
 
 #current-task, #clock-panel {
     font-size: 4em;
-    margin-bottom: 0;
 }
 
 #tomato-counts {
@@ -74,6 +73,10 @@ input[type=text]:focus {
 
 #estimated-tomato {
     width: 20%;
+}
+
+#todos {
+    margin-top: 10px;
 }
 
 ul#todo-list {
