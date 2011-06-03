@@ -63,10 +63,6 @@ input[type=text]:focus {
     margin-bottom: 15px;
 }
 
-#ring-switch {
-    display: none;
-}
-
 #todo-description {
     width: 65%;
 }
