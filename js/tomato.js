@@ -3,9 +3,9 @@ var minutesToMillsecs = function (minutes) {
 };
 
 const interval = 1000;
-const tomatoDuration = minutesToMillsecs(0.1);
-const shortBreakDuration = minutesToMillsecs(0.1);
-const longBreakDuration = minutesToMillsecs(0.2);
+const tomatoDuration = minutesToMillsecs(25);
+const shortBreakDuration = minutesToMillsecs(5);
+const longBreakDuration = minutesToMillsecs(20);
 
 var Tomato = Backbone.Model.extend({
     initialize: function (spec) {
