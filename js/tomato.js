@@ -76,11 +76,14 @@ var Tomato = Backbone.Model.extend({
     },
 
     setCurrentTask: function (task) {
-        this.currentTask = task;
+        this.currentTask = null;
         this.atBreak = false;
-        this.stopClock();
+        this.stopClock(true);
         this.breakCount = 0;
-        this.tomatoCount = task.get('usedTomato');
+        if (task) {
+            this.currentTask = task;
+            this.tomatoCount = task.get('usedTomato');
+        }
         this.trigger('taskChange');
     },
 });

@@ -8,15 +8,19 @@ var Todo = Backbone.Model.extend({
         usedTomato: 0
     },
 
-    activate: function () { 
-        this.trigger('activate', this); 
+    activate: function () {
+        if (!this.get('completed')) {
+            this.trigger('activate', this);
+        }
     },
 
     toggleCompleted: function () {
+        this.trigger('activate', null);
         this.save({completed: !this.get('completed')});
     },
 
     remove: function () {
+        this.trigger('activate', null);
         this.destroy();
     }
 });
@@ -71,7 +75,7 @@ var TodoView = Backbone.View.extend({
 var TodoList = Backbone.Collection.extend({
     model: Todo,
     localStorage: new Store("todos"),
-    
+
     initialize: function (spec) {
         this.tomatoModel = spec.tomatoModel;
     }
