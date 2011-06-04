@@ -17,3 +17,8 @@ According to [the official website](http://www.pomodorotechnique.com/):
 ## How do I use it?
 
 Visit [Tomato's Github Page](http://iwinux.github.com/tomato), and the rest is straightforward.
+
+## Credit
+
+The UI design is largely inspired by [Thingler](http://www.thingler.com/),
+and the todo list coding is inspired by Backbone.js's demo app.
