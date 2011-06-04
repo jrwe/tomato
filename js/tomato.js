@@ -80,14 +80,13 @@ var Tomato = Backbone.Model.extend({
         this.atBreak = false;
         this.stopClock();
         this.breakCount = 0;
-        this.tomatoCount = task.usedTomato;
+        this.tomatoCount = task.get('usedTomato');
         this.trigger('taskChange');
     },
 });
 
 var TomatoView = Backbone.View.extend({
     initialize: function (spec) {
-        //_.bindAll(this, 'onClockStop', 'onClockStart', 'onTimeUp', 'render');
         _.bindAll(this,
             'render', 'onTimeUp', 'onClockStart',
             'onClockStop', 'onClockSwitchClick',
