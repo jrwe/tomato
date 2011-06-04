@@ -50,7 +50,11 @@
     <script type="text/javascript">
         $(function () {
             var tomato = new Tomato();
-            var tomatoView = new TomatoView({model: tomato, el: $('#clock')});
+            var tomatoView = new TomatoView({
+				model: tomato,
+				el: $('#clock'),
+				ring: document.getElementById('alarm')
+			});
             var todoList = new TodoList({tomatoModel: tomato});
             var todoListView = new TodoListView({model: todoList, el: $('#todos')});
             tomatoView.render();

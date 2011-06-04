@@ -3,7 +3,7 @@ var minutesToMillsecs = function (minutes) {
 };
 
 const interval = 1000;
-const tomatoDuration = minutesToMillsecs(0.3);
+const tomatoDuration = minutesToMillsecs(0.1);
 const shortBreakDuration = minutesToMillsecs(0.1);
 const longBreakDuration = minutesToMillsecs(0.2);
 
@@ -86,7 +86,7 @@ var Tomato = Backbone.Model.extend({
 });
 
 var TomatoView = Backbone.View.extend({
-    initialize: function () {
+    initialize: function (spec) {
         //_.bindAll(this, 'onClockStop', 'onClockStart', 'onTimeUp', 'render');
         _.bindAll(this,
             'render', 'onTimeUp', 'onClockStart',
@@ -100,6 +100,7 @@ var TomatoView = Backbone.View.extend({
         this.model.bind('clockStop', this.onClockStop);
 
         this.clockSwitchLabel = 'Start Tomato';
+        this.ring = spec.ring;
     },
 
     render: function (opts) {
@@ -128,7 +129,8 @@ var TomatoView = Backbone.View.extend({
     },
 
     stopRing: function () {
-        //this.ring.pause blah blah
+        this.ring.pause();
+        this.ring.currentTime = 0;
         this.$('#ring-switch').remove();
     },
 
@@ -152,6 +154,7 @@ var TomatoView = Backbone.View.extend({
 
     onTimeUp: function () {
         this.render({isTimeUp: true});
+        this.ring.play();
         this.$('#ring-switch').click(this.stopRing);
     }
 });
