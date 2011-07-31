@@ -45,7 +45,7 @@ input[type=text]:focus {
 }
 
 #current-task, #clock-panel {
-    font-size: 4em;
+    font-size: 2.5em;
 }
 
 #tomato-counts {
